@@ -18,16 +18,15 @@ app.post('/latlng', async (c) => {
         addresses: string[];
     };
 
-    const chunks = chunk(body.addresses, parseInt(process.env.bulkBatchSize ?? '10'));
     const requests = [];
 
-    for (const sect of chunks) {
+    for (let i = 0; i < body.addresses.length; i++) {
+        const addr = body.addresses[i];
+
         requests.push(
-            await fetch(nominatimURL + '/search?' + sect.map((addr) => 'q=' + encodeURIComponent(addr)).join('&')).then(
-                (res) => {
-                    return res.json();
-                }
-            )
+            await fetch(nominatimURL + '/search?q=' + encodeURIComponent(addr)).then((res) => {
+                return res.json();
+            })
         );
     }
 
