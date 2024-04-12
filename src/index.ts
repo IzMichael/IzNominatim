@@ -1,8 +1,11 @@
 import { Hono } from 'hono';
+import { cors } from 'hono/cors';
 import { serve } from '@hono/node-server';
 
-const nominatimURL = 'https://NOMINATIMURL.com';
+const nominatimURL = 'http://izhp:1982';
 const app = new Hono();
+
+app.use('/*', cors());
 
 app.get('/', (c) => {
     return c.text('IzNominatim v1.0.0 - https://github.com/IzMichael/IzNominatim');
