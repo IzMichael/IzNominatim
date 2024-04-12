@@ -18,16 +18,18 @@ app.post('/latlng', async (c) => {
         addresses: string[];
     };
 
-    const requests = await Promise.all(
-        body.addresses.map(async (addr) => {
-            return await fetch(nominatimURL + '/search?q=' + encodeURIComponent(addr)).then((res) => {
-                return res.json();
-            });
-        })
-    );
+    const requests = (
+        await Promise.all(
+            body.addresses.map(async (addr) => {
+                return await fetch(nominatimURL + '/search?q=' + encodeURIComponent(addr)).then((res) => {
+                    return res.json();
+                });
+            })
+        )
+    ).flat();
 
-    if (requests?.[0]?.[0]) {
-        return c.json({ status: 'success', items: requests.map((req) => req[0]) }, 200);
+    if (requests?.[0]) {
+        return c.json({ status: 'success', items: requests }, 200);
     } else {
         return c.json({ status: 'failed', message: 'Address not parsed.' }, 406);
     }
