@@ -23,16 +23,19 @@ app.post('/latlng', async (c) => {
     for (let i = 0; i < body.addresses.length; i++) {
         const addr = body.addresses[i];
 
-        requests.push(
-            await fetch(nominatimURL + '/search?q=' + encodeURIComponent(addr)).then((res) => {
-                return res.json();
-            })
-        );
+        requests.push({
+            query: addr,
+            result: (
+                await fetch(nominatimURL + '/search?q=' + encodeURIComponent(addr)).then((res) => {
+                    return res.json();
+                })
+            )[0],
+        });
     }
 
     const data = requests.flat();
 
-    if (data?.[0]) {
+    if (data?.[0].result) {
         return c.json({ status: 'success', items: data }, 200);
     } else {
         return c.json({ status: 'failed', message: 'Address not parsed.' }, 406);
