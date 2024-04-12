@@ -1,0 +1,25 @@
+{
+    "name": "iznominatim",
+    "version": "1.0.0",
+    "author": {
+        "name": "IzMichael",
+        "email": "michael@izmichael.com",
+        "url": "https://izmichael.com"
+    },
+    "license": "Apache-2.0",
+    "scripts": {
+        "dev": "tsx watch src/index.ts"
+    },
+    "dependencies": {
+        "@hono/node-server": "^1.10.0",
+        "eslint": "^9.0.0",
+        "eslint-config-prettier": "^9.1.0",
+        "hono": "^4.2.3",
+        "prettier": "^3.2.5"
+    },
+    "devDependencies": {
+        "@types/node": "^20.11.17",
+        "tsx": "^4.7.1"
+    }
+}
+
