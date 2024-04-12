@@ -18,18 +18,23 @@ app.post('/latlng', async (c) => {
         addresses: string[];
     };
 
-    const requests = (
-        await Promise.all(
-            body.addresses.map(async (addr) => {
-                return await fetch(nominatimURL + '/search?q=' + encodeURIComponent(addr)).then((res) => {
-                    return res.json();
-                });
-            })
-        )
-    ).flat();
+    const chunks = chunk(body.addresses, parseInt(process.env.bulkBatchSize ?? '10'));
+    const requests = [];
 
-    if (requests?.[0]) {
-        return c.json({ status: 'success', items: requests }, 200);
+    for (const sect of chunks) {
+        requests.push(
+            await fetch(nominatimURL + '/search?' + sect.map((addr) => 'q=' + encodeURIComponent(addr)).join('&')).then(
+                (res) => {
+                    return res.json();
+                }
+            )
+        );
+    }
+
+    const data = requests.flat();
+
+    if (data?.[0]) {
+        return c.json({ status: 'success', items: data }, 200);
     } else {
         return c.json({ status: 'failed', message: 'Address not parsed.' }, 406);
     }
@@ -42,4 +47,13 @@ serve({
     fetch: app.fetch,
     port,
 });
+
+// Helpers
+
+function chunk<T>(arr: T[], chunkSize: number): T[][] {
+    if (chunkSize <= 0) throw 'Invalid chunk size';
+    var R = [];
+    for (var i = 0, len = arr.length; i < len; i += chunkSize) R.push(arr.slice(i, i + chunkSize));
+    return R;
+}
 
