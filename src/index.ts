@@ -2,7 +2,9 @@ import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 import { serve } from '@hono/node-server';
 
-const nominatimURL = 'http://izhp:1982';
+import 'dotenv/config';
+
+const nominatimURL = process.env.instanceURL;
 const app = new Hono();
 
 app.use('/*', cors());
@@ -31,7 +33,7 @@ app.post('/latlng', async (c) => {
     }
 });
 
-const port = 2084;
+const port = parseInt(process.env.port ?? '2048');
 console.log(`Server is running on port ${port}`);
 
 serve({
