@@ -35,11 +35,7 @@ app.post('/latlng', async (c) => {
 
     const data = requests.flat();
 
-    if (data?.[0].result) {
-        return c.json({ status: 'success', items: data }, 200);
-    } else {
-        return c.json({ status: 'failed', message: 'Address not parsed.' }, 406);
-    }
+    return c.json({ status: 'success', items: data }, 200);
 });
 
 const port = parseInt(process.env.port ?? '2048');
